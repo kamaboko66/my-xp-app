@@ -44,7 +44,8 @@ export default function MonthTaskPage() {
   }
 
   // 🔹 タスク削除
-  const deleteTask = async (task) => {
+  const deleteTask = async (task: { id: string; xp: number }) => {
+
     const { error } = await supabase.from("tasks").delete().eq("id", task.id)
     if (error) {
       console.error("Delete error:", error)
