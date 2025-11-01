@@ -6,7 +6,8 @@ import { format } from "date-fns"
 import { ja } from "date-fns/locale"
 
 export default function MonthTaskPage() {
-  const [tasks, setTasks] = useState([])
+  const [tasks, setTasks] = useState<any[]>([])
+
   const [selectedDate, setSelectedDate] = useState(new Date())
 
   useEffect(() => {
