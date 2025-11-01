@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import { supabase } from "../../utils/supabaseClient"
 import { format } from "date-fns"
-import ja from "date-fns/locale/ja"
+import { ja } from "date-fns/locale"
 
 export default function MonthTaskPage() {
   const [tasks, setTasks] = useState([])
