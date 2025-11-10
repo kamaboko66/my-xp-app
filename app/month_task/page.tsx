@@ -1,13 +1,19 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, FormEvent } from "react"
 import { supabase } from "../../utils/supabaseClient"
 import { format } from "date-fns"
 import { ja } from "date-fns/locale"
 
-export default function MonthTaskPage() {
-  const [tasks, setTasks] = useState<any[]>([])
+type Task = {
+  id: string
+  title: string
+  xp: number
+  date: string
+}
 
+export default function MonthTaskPage() {
+  const [tasks, setTasks] = useState<Task[]>([])
   const [selectedDate, setSelectedDate] = useState(new Date())
 
   useEffect(() => {
@@ -22,7 +28,7 @@ export default function MonthTaskPage() {
       .order("date", { ascending: false })
 
     if (error) console.error("Fetch error:", error)
-    else setTasks(data)
+    else setTasks(data as Task[])
   }
 
   // 🔹 タスク追加
@@ -44,8 +50,7 @@ export default function MonthTaskPage() {
   }
 
   // 🔹 タスク削除
-  const deleteTask = async (task: { id: string; xp: number }) => {
-
+  const deleteTask = async (task: Task) => {
     const { error } = await supabase.from("tasks").delete().eq("id", task.id)
     if (error) {
       console.error("Delete error:", error)
@@ -65,7 +70,7 @@ export default function MonthTaskPage() {
     <div className="p-4 space-y-6">
       <h1 className="text-xl font-bold text-center">月ごとのXP履歴</h1>
 
-      {/* カレンダー（暫定：日付選択） */}
+      {/* カレンダー（日付選択） */}
       <input
         type="date"
         value={format(selectedDate, "yyyy-MM-dd")}
@@ -106,12 +111,18 @@ export default function MonthTaskPage() {
   )
 }
 
-function AddTaskForm({ onAdd, defaultDate }) {
+// 🔹 AddTaskForm に型注釈を追加
+type AddTaskFormProps = {
+  onAdd: (title: string, xp: number, date: string) => void
+  defaultDate: Date
+}
+
+function AddTaskForm({ onAdd, defaultDate }: AddTaskFormProps) {
   const [title, setTitle] = useState("")
   const [xp, setXp] = useState(0)
   const [date, setDate] = useState(format(defaultDate, "yyyy-MM-dd"))
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     onAdd(title, xp, date)
     setTitle("")
